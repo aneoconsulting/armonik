@@ -37,7 +37,7 @@ resource "aws_iam_instance_profile" "client_profile" {
 # VMs
 module "vm" {
   source                      = "terraform-aws-modules/ec2-instance/aws"
-  version                     = "~> 4.1.4"
+  version                     = "~> 4.5.0"
   for_each                    = toset(var.vm_names)
   name                        = each.key
   ami                         = var.ami
