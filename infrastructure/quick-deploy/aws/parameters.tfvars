@@ -216,6 +216,32 @@ eks_managed_node_groups = {
       AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
     }
   }
+  # Node group for windows
+  windows = {
+    name                        = "windows"
+    launch_template_description = "Node group for ArmoniK windows based pods"
+    ami_type                    = "WINDOWS_CORE_2022_x86_64"
+    instance_types              = ["c5.large"]
+    capacity_type               = "ON_DEMAND"
+    min_size                    = 1
+    desired_size                = 1
+    max_size                    = 10
+    labels = {
+      service                        = "windows"
+      "node.kubernetes.io/lifecycle" = "ondemand"
+    }
+    taints = {
+      dedicated = {
+        key    = "service"
+        value  = "windows"
+        effect = "NO_SCHEDULE"
+      }
+    }
+    iam_role_use_name_prefix = false
+    iam_role_additional_policies = {
+      AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+    }
+  }
 }
 
 # List of self managed node groups
@@ -370,6 +396,7 @@ logging_level = "Information"
 
 # Parameters of control plane
 control_plane = {
+  tag = "0.25.0-jgwinimages.41.9cc8c34a"
   limits = {
     cpu    = "1000m"
     memory = "2048Mi"
@@ -379,7 +406,11 @@ control_plane = {
     memory = "500Mi"
   }
   default_partition = "default"
-  node_selector     = { service = "control-plane" }
+  node_selector = {
+    service              = "windows"
+    "kubernetes.io/os"   = "windows"
+    "kubernetes.io/arch" = "amd64"
+  }
 }
 
 # Parameters of admin GUI
@@ -399,11 +430,16 @@ admin_gui = {
 compute_plane = {
   # Default partition that uses the C# extension for the worker
   default = {
-    node_selector = { service = "workers" }
+    node_selector = {
+      "service"            = "windows"
+      "kubernetes.io/os"   = "windows"
+      "kubernetes.io/arch" = "amd64"
+    }
     # number of replicas for each deployment of compute plane
     replicas = 1
     # ArmoniK polling agent
     polling_agent = {
+      tag = "0.25.0-jgwinimages.41.9cc8c34a"
       limits = {
         cpu    = "2000m"
         memory = "2048Mi"
@@ -557,11 +593,16 @@ compute_plane = {
   },
   # Partition for the htcmock worker
   htcmock = {
-    node_selector = { service = "workers" }
+    node_selector = {
+      "service"            = "windows"
+      "kubernetes.io/os"   = "windows"
+      "kubernetes.io/arch" = "amd64"
+    }
     # number of replicas for each deployment of compute plane
     replicas = 1
     # ArmoniK polling agent
     polling_agent = {
+      tag = "0.25.0-jgwinimages.41.9cc8c34a"
       limits = {
         cpu    = "2000m"
         memory = "2048Mi"
@@ -575,6 +616,7 @@ compute_plane = {
     worker = [
       {
         image = "dockerhubaneo/armonik_core_htcmock_test_worker"
+        tag   = "0.25.0-jgwinimages.41.9cc8c34a"
         limits = {
           cpu    = "1000m"
           memory = "1024Mi"
