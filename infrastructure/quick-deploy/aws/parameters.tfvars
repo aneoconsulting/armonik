@@ -36,8 +36,11 @@ eks = {
   cluster_version                = "1.25"
   node_selector                  = { service = "monitoring" }
   cluster_endpoint_public_access = true
-  map_roles                      = []
-  map_users                      = []
+  cluster_addons = {
+    vpc-cni = {
+      most_recent = true
+    }
+  }
 }
 
 # List of EKS managed node groups
@@ -239,7 +242,10 @@ eks_managed_node_groups = {
     }
     iam_role_use_name_prefix = false
     iam_role_additional_policies = {
-      AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      AmazonSSMManagedInstanceCore   = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      AmazonEKSClusterPolicy         = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+      AmazonEKSVPCResourceController = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
+
     }
   }
 }
@@ -250,8 +256,8 @@ self_managed_node_groups = {
     name                        = "others"
     launch_template_description = "Node group for others"
     instance_type               = "c5.large"
-    min_size                    = 0
-    desired_size                = 0
+    min_size                    = 1
+    desired_size                = 1
     max_size                    = 5
     force_delete                = true
     force_delete_warm_pool      = true
@@ -294,6 +300,7 @@ self_managed_node_groups = {
       AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
     }
   }
+
 }
 
 # List of fargate profiles
@@ -316,7 +323,7 @@ elasticache = {
   num_cache_clusters = 2
 }
 
-#s3_os = {}
+# s3_os = {}
 
 mq = {
   engine_type        = "ActiveMQ"
@@ -348,7 +355,11 @@ grafana = {
 }
 
 node_exporter = {
-  node_selector = {}
+  node_selector = {
+    "service"            = "windows"
+    "kubernetes.io/os"   = "windows"
+    "kubernetes.io/arch" = "amd64"
+  }
 }
 
 windows_exporter = {
@@ -388,15 +399,20 @@ metrics_exporter = {
 
 fluent_bit = {
   is_daemonset  = true
+  image_tag     = "windows-2022-3.0.4"
   node_selector = {}
 }
 
+upload_images = false
+
 # Logging level
-logging_level = "Information"
+logging_level = "Debug"
 
 # Parameters of control plane
 control_plane = {
-  tag = "0.25.0-jgwinimages.41.9cc8c34a"
+  image = "dockerhubaneo/armonik_control"
+  tag   = "0.25.0-jgx509store.117.75589619"
+  #image_pull_policy = "Always"
   limits = {
     cpu    = "1000m"
     memory = "2048Mi"
@@ -407,6 +423,7 @@ control_plane = {
   }
   default_partition = "default"
   node_selector = {
+    #service = "control-plane"
     service              = "windows"
     "kubernetes.io/os"   = "windows"
     "kubernetes.io/arch" = "amd64"
@@ -431,15 +448,13 @@ compute_plane = {
   # Default partition that uses the C# extension for the worker
   default = {
     node_selector = {
-      "service"            = "windows"
-      "kubernetes.io/os"   = "windows"
-      "kubernetes.io/arch" = "amd64"
+      service = "workers"
     }
     # number of replicas for each deployment of compute plane
     replicas = 1
     # ArmoniK polling agent
     polling_agent = {
-      tag = "0.25.0-jgwinimages.41.9cc8c34a"
+      #tag = "0.25.0-jgwinimages.41.9cc8c34a"
       limits = {
         cpu    = "2000m"
         memory = "2048Mi"
@@ -602,7 +617,7 @@ compute_plane = {
     replicas = 1
     # ArmoniK polling agent
     polling_agent = {
-      tag = "0.25.0-jgwinimages.41.9cc8c34a"
+      tag = "0.25.0-jgx509store.117.75589619"
       limits = {
         cpu    = "2000m"
         memory = "2048Mi"
@@ -616,7 +631,7 @@ compute_plane = {
     worker = [
       {
         image = "dockerhubaneo/armonik_core_htcmock_test_worker"
-        tag   = "0.25.0-jgwinimages.41.9cc8c34a"
+        tag   = "0.25.0-jgx509store.117.75589619"
         limits = {
           cpu    = "1000m"
           memory = "1024Mi"
