@@ -7,7 +7,7 @@ resource "aws_key_pair" "ssh_key" {
 # master
 module "master" {
   source                      = "terraform-aws-modules/ec2-instance/aws"
-  version                     = "~> 3.3.0"
+  version                     = "~> 5.7.1"
   name                        = "master"
   ami                         = "ami-00f7e5c52c0f43726"
   instance_type               = "t3a.xlarge"
@@ -24,7 +24,7 @@ module "master" {
 module "worker" {
   count                       = var.nb_workers
   source                      = "terraform-aws-modules/ec2-instance/aws"
-  version                     = "~> 3.3.0"
+  version                     = "~> 5.7.1"
   name                        = "worker-${count.index}"
   ami                         = "ami-00f7e5c52c0f43726"
   instance_type               = "t3a.xlarge"
