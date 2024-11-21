@@ -1,0 +1,16 @@
+{
+    "test_environnement" : {
+        "instance_type" : "c24.xlarge",
+        "Processor" : "Intel Xeon de 2e (Cascade Lake)",
+        "CPU_frequency" : "3.6 GHz - 3.9 GHz",
+        "nb_cpus" : "96",
+        "RAM" : "192",
+        "Network_bandwidth" : "25",
+        "EBS_bandwidth" : "19000",
+        "Kubernetes" : "AWS EKS 1.25",
+        "Object_object_type" : "AWS Elasticache for Redis",
+        "Storage_queue_storage" : "Amazon MQ, broker : ActiveMQ 5.16.4",
+        "Storage_table_type" : "MongoDB 6.0.1",
+        "OS" : "Linux"
+    }
+}
