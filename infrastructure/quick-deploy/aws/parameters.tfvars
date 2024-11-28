@@ -36,6 +36,8 @@ eks = {
   cluster_version                = "1.25"
   node_selector                  = { service = "monitoring" }
   cluster_endpoint_public_access = true
+  map_roles                      = []
+  map_users                      = []
   cluster_addons = {
     vpc-cni = {
       most_recent = true
@@ -220,7 +222,7 @@ eks_managed_node_groups = {
     }
   }
   # Node group for windows
-  windows = {
+  /*windows = {
     name                        = "windows"
     launch_template_description = "Node group for ArmoniK windows based pods"
     ami_type                    = "WINDOWS_CORE_2022_x86_64"
@@ -230,12 +232,12 @@ eks_managed_node_groups = {
     desired_size                = 1
     max_size                    = 10
     labels = {
-      service                        = "windows"
+      platform                       = "windows"
       "node.kubernetes.io/lifecycle" = "ondemand"
     }
     taints = {
       dedicated = {
-        key    = "service"
+        key    = "platform"
         value  = "windows"
         effect = "NO_SCHEDULE"
       }
@@ -245,9 +247,9 @@ eks_managed_node_groups = {
       AmazonSSMManagedInstanceCore   = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
       AmazonEKSClusterPolicy         = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
       AmazonEKSVPCResourceController = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
-
     }
   }
+  */
 }
 
 # List of self managed node groups
@@ -355,18 +357,15 @@ grafana = {
 }
 
 node_exporter = {
-  node_selector = {
-    "service"            = "windows"
-    "kubernetes.io/os"   = "windows"
-    "kubernetes.io/arch" = "amd64"
-  }
+  node_selector = {}
 }
 
-windows_exporter = {
+#node exporter for windows
+/* windows_exporter = {
   node_selector = {
-    "plateform" = "windows"
+    "platform" = "windows"
   }
-}
+} */
 
 prometheus = {
   node_selector = { service = "metrics" }
@@ -399,20 +398,24 @@ metrics_exporter = {
 
 fluent_bit = {
   is_daemonset  = true
-  image_tag     = "windows-2022-3.0.4"
   node_selector = {}
 }
-
-upload_images = false
+/*
+fluent_bit_windows = {
+  is_daemonset = true
+  #image_name   = "fluent/fluent-bit"
+  image_tag = "windows-2022-3.2.0"
+  node_selector_windows = {
+    "platform" = "windows"
+  }
+}
+*/
 
 # Logging level
 logging_level = "Debug"
 
 # Parameters of control plane
 control_plane = {
-  image = "dockerhubaneo/armonik_control"
-  tag   = "0.25.0-jgx509store.117.75589619"
-  #image_pull_policy = "Always"
   limits = {
     cpu    = "1000m"
     memory = "2048Mi"
@@ -422,12 +425,15 @@ control_plane = {
     memory = "500Mi"
   }
   default_partition = "default"
-  node_selector = {
-    #service = "control-plane"
-    service              = "windows"
-    "kubernetes.io/os"   = "windows"
-    "kubernetes.io/arch" = "amd64"
+  node_selector     = { service = "control-plane" }
+  /*
+  node_selector     = { 
+  service = "control-plane"
+  "platform"           = "windows"
+  "kubernetes.io/os"   = "windows"
+  "kubernetes.io/arch" = "amd64"
   }
+  */
 }
 
 # Parameters of admin GUI
@@ -454,7 +460,6 @@ compute_plane = {
     replicas = 1
     # ArmoniK polling agent
     polling_agent = {
-      #tag = "0.25.0-jgwinimages.41.9cc8c34a"
       limits = {
         cpu    = "2000m"
         memory = "2048Mi"
@@ -608,16 +613,18 @@ compute_plane = {
   },
   # Partition for the htcmock worker
   htcmock = {
+    node_selector = { service = "workers" }
+    /*
     node_selector = {
-      "service"            = "windows"
+      "platform"           = "windows"
       "kubernetes.io/os"   = "windows"
       "kubernetes.io/arch" = "amd64"
     }
+*/
     # number of replicas for each deployment of compute plane
     replicas = 1
     # ArmoniK polling agent
     polling_agent = {
-      tag = "0.25.0-jgx509store.117.75589619"
       limits = {
         cpu    = "2000m"
         memory = "2048Mi"
@@ -631,7 +638,6 @@ compute_plane = {
     worker = [
       {
         image = "dockerhubaneo/armonik_core_htcmock_test_worker"
-        tag   = "0.25.0-jgx509store.117.75589619"
         limits = {
           cpu    = "1000m"
           memory = "1024Mi"
