@@ -339,6 +339,22 @@ module "fluent_bit" {
     var_lib_docker_containers_hostpath = var.fluent_bit.var_lib_docker_containers_hostpath
     run_log_journal_hostpath           = var.fluent_bit.run_log_journal_hostpath
   }
+  node_selector_windows = var.fluent_bit_windows.node_selector_windows
+  fluent_bit_windows = {
+    container_name                     = "fluent-bit-windows"
+    image                              = local.ecr_images["${var.fluent_bit_windows.image_name}:${try(coalesce(var.fluent_bit_windows.image_tag), "")}"].image #var.fluent_bit_windows.image_name # 
+    tag                                = local.ecr_images["${var.fluent_bit_windows.image_name}:${try(coalesce(var.fluent_bit_windows.image_tag), "")}"].tag   #var.fluent_bit_windows.image_tag  #
+    parser                             = var.fluent_bit_windows.parser
+    image_pull_secrets                 = var.fluent_bit_windows.pull_secrets
+    is_daemonset                       = var.fluent_bit_windows.is_daemonset
+    http_server                        = (var.fluent_bit_windows.http_port == 0 ? "Off" : "On")
+    http_port                          = (var.fluent_bit_windows.http_port == 0 ? "" : tostring(var.fluent_bit_windows.http_port))
+    read_from_head                     = (var.fluent_bit.read_from_head ? "On" : "Off")
+    read_from_tail                     = (var.fluent_bit.read_from_head ? "Off" : "On")
+    fluent_bit_state_hostpath          = var.fluent_bit.fluent_bit_state_hostpath
+    var_lib_docker_containers_hostpath = var.fluent_bit_windows.var_lib_docker_containers_hostpath
+    run_log_journal_hostpath           = var.fluent_bit_windows.run_log_journal_hostpath
+  }
   seq = length(module.seq) != 0 ? {
     host    = module.seq[0].host
     port    = module.seq[0].port

@@ -9,6 +9,7 @@ locals {
     [local.mongodb_image_name, var.mongodb.image_tag],
     [var.prometheus.image_name, var.prometheus.image_tag],
     [var.fluent_bit.image_name, var.fluent_bit.image_tag],
+    [var.fluent_bit_windows.image_name, var.fluent_bit_windows.image_tag],
     [var.metrics_exporter.image_name, var.metrics_exporter.image_tag],
     [var.job_partitions_in_database.image, var.job_partitions_in_database.tag],
     [var.admin_gui.image, var.admin_gui.tag],
