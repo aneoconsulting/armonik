@@ -176,7 +176,7 @@ gke = {
     },
     {
       name             = "state-database"
-      machine_type     = "c2d-highcpu-56"
+      machine_type     = "c2d-highcpu-32"
       image_type       = "COS_CONTAINERD"
       min_cpu_platform = ""
       # or see https://cloud.google.com/compute/docs/instances/specify-min-cpu-platform#availablezones
@@ -195,7 +195,7 @@ gke = {
       enable_gvnic                = false
       logging_variant             = "DEFAULT"
       local_ssd_count             = 0
-      disk_size_gb                = 100
+      disk_size_gb                = 75
       disk_type                   = "pd-ssd"
       spot                        = false
       boot_disk_kms_key           = ""
@@ -245,18 +245,20 @@ keda = {
   node_selector = { service = "monitoring" }
 }
 
+activemq = {}
+
 mongodb = {
   node_selector = { service = "state-database" }
   replicas      = 2
   mongodb_resources = {
     limits = {
-      "cpu"               = "52"
-      "memory"            = "100Gi"
+      "cpu"               = "30"
+      "memory"            = "60Gi"
       "ephemeral-storage" = "20Gi"
     }
     requests = {
-      "cpu"               = "20"
-      "memory"            = "48Gi"
+      "cpu"               = "14"
+      "memory"            = "29Gi"
       "ephemeral-storage" = "4Gi"
     }
   }
@@ -265,22 +267,22 @@ mongodb = {
 # Nullify to disable sharding, each nullification of subobject will result in the use of default values 
 # mongodb_sharding = {}
 
-# memorystore = {
-#  memory_size_gb = 20
-#  auth_enabled   = true
-#  connect_mode   = "PRIVATE_SERVICE_ACCESS"
-#  redis_configs  = {
-#    "maxmemory-gb"     = "18"
-#    "maxmemory-policy" = "volatile-lru"
-#  }
-#  reserved_ip_range       = "10.0.0.0/24"
-#  redis_version           = "REDIS_7_0"
-#  tier                    = "STANDARD_HA"
-#  transit_encryption_mode = "SERVER_AUTHENTICATION"
-#  replica_count           = 3
-#  read_replicas_mode      = "READ_REPLICAS_ENABLED"
-# }
-gcs_os = {}
+memorystore = {
+ memory_size_gb = 20
+ auth_enabled   = true
+ connect_mode   = "PRIVATE_SERVICE_ACCESS"
+ redis_configs  = {
+   "maxmemory-gb"     = "18"
+   "maxmemory-policy" = "volatile-lru"
+ }
+ reserved_ip_range       = "10.0.0.0/24"
+ redis_version           = "REDIS_6_0"
+ tier                    = "STANDARD_HA"
+ transit_encryption_mode = "SERVER_AUTHENTICATION"
+ replica_count           = 1
+ read_replicas_mode      = "READ_REPLICAS_ENABLED"
+}
+# gcs_os = {}
 
 seq = {
   node_selector = { service = "monitoring" }
