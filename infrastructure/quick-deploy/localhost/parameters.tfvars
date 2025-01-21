@@ -167,6 +167,8 @@ compute_plane = {
   htcmock = {
     # number of replicas for each deployment of compute plane
     replicas = 0
+    # Socket type used by agent and worker to communicate
+    socket_type = "tcp"
     # ArmoniK polling agent
     polling_agent = {
       limits = {
