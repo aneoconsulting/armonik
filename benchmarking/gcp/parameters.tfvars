@@ -148,7 +148,7 @@ gke = {
     },
     {
       name             = "monitoring"
-      machine_type     = "n2-highcpu-2"
+      machine_type     = "n2-highcpu-4"
       image_type       = "COS_CONTAINERD"
       min_cpu_platform = ""
       # or see https://cloud.google.com/compute/docs/instances/specify-min-cpu-platform#availablezones
@@ -189,7 +189,7 @@ gke = {
       total_min_count             = 1          # per NodePool
       total_max_count             = 1         # per NodePool
       location_policy             = "BALANCED" # or ANY
-      auto_repair                 = false
+      auto_repair                 = true
       auto_upgrade                = true
       enable_gcfs                 = false
       enable_gvnic                = false
@@ -252,14 +252,14 @@ mongodb = {
   replicas      = 2
   mongodb_resources = {
     limits = {
-      "cpu"               = "30"
-      "memory"            = "60Gi"
+      "cpu"               = "26"
+      "memory"            = "50Gi"
       "ephemeral-storage" = "20Gi"
     }
     requests = {
-      "cpu"               = "14"
-      "memory"            = "29Gi"
-      "ephemeral-storage" = "4Gi"
+      "cpu"               = "10"
+      "memory"            = "24Gi"
+      "ephemeral-storage" = "8Gi"
     }
   }
 }
@@ -267,22 +267,22 @@ mongodb = {
 # Nullify to disable sharding, each nullification of subobject will result in the use of default values 
 # mongodb_sharding = {}
 
-memorystore = {
- memory_size_gb = 20
- auth_enabled   = true
- connect_mode   = "PRIVATE_SERVICE_ACCESS"
- redis_configs  = {
-   "maxmemory-gb"     = "18"
-   "maxmemory-policy" = "volatile-lru"
- }
- reserved_ip_range       = "10.0.0.0/24"
- redis_version           = "REDIS_6_0"
- tier                    = "STANDARD_HA"
- transit_encryption_mode = "SERVER_AUTHENTICATION"
- replica_count           = 1
- read_replicas_mode      = "READ_REPLICAS_ENABLED"
-}
-# gcs_os = {}
+# memorystore = {
+#  memory_size_gb = 20
+#  auth_enabled   = true
+#  connect_mode   = "PRIVATE_SERVICE_ACCESS"
+#  redis_configs  = {
+#    "maxmemory-gb"     = "18"
+#    "maxmemory-policy" = "volatile-lru"
+#  }
+# #  reserved_ip_range       = "10.0.0.0/24"
+#  redis_version           = "REDIS_7_0"
+#  tier                    = "STANDARD_HA"
+#  transit_encryption_mode = "SERVER_AUTHENTICATION"
+#  replica_count           = 3
+#  read_replicas_mode      = "READ_REPLICAS_ENABLED"
+# }
+gcs_os = {}
 
 seq = {
   node_selector = { service = "monitoring" }
@@ -406,6 +406,13 @@ authentication = {
 configurations = {
   core = {
     env = {
+      Amqp__AllowHostMismatch = true
+      Amqp__AllowHostMismatch                    = true
+      Amqp__MaxPriority                          = "10"
+      Amqp__MaxRetries                           = "5"
+      Amqp__QueueStorage__LockRefreshPeriodicity = "00:00:45"
+      Amqp__QueueStorage__PollPeriodicity        = "00:00:10"
+      Amqp__QueueStorage__LockRefreshExtension   = "00:02:00"
       MongoDB__TableStorage__PollingDelayMin = "00:00:01"
       MongoDB__TableStorage__PollingDelayMax = "00:00:10"
       MongoDB__TableStorage__PollingDelay    = "00:00:01"
@@ -436,3 +443,5 @@ environment_description = {
   description = "GCP environment"
   color       = "#80ff80"
 }
+
+upload_images = false
