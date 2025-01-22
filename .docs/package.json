@@ -10,8 +10,8 @@
     "preview": "nuxi preview",
     "lint": "eslint --cache .",
     "lint:fix": "eslint --cache --fix .",
-    "lint:md": "markdownlint . && case-police ./**/*.md",
-    "lint:md:fix": "markdownlint . --fix && case-police --fix ./**/*.md"
+    "lint:md": "markdownlint . && case-police content/**/*",
+    "lint:md:fix": "markdownlint . --fix && case-police --fix content/**/*"
   },
   "dependencies": {
     "@aneoconsultingfr/armonik-docs-theme": "^0.6.15",
