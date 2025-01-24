@@ -38,6 +38,11 @@ eks = {
   cluster_endpoint_public_access = true
   map_roles                      = []
   map_users                      = []
+  cluster_addons = {
+    vpc-cni = {
+      most_recent = true
+    }
+  }
 }
 
 # List of EKS managed node groups
@@ -216,6 +221,35 @@ eks_managed_node_groups = {
       AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
     }
   }
+  # Node group for windows
+  /*windows = {
+    name                        = "windows"
+    launch_template_description = "Node group for ArmoniK windows based pods"
+    ami_type                    = "WINDOWS_CORE_2022_x86_64"
+    instance_types              = ["c5.large"]
+    capacity_type               = "ON_DEMAND"
+    min_size                    = 1
+    desired_size                = 1
+    max_size                    = 10
+    labels = {
+      platform                       = "windows"
+      "node.kubernetes.io/lifecycle" = "ondemand"
+    }
+    taints = {
+      dedicated = {
+        key    = "platform"
+        value  = "windows"
+        effect = "NO_SCHEDULE"
+      }
+    }
+    iam_role_use_name_prefix = false
+    iam_role_additional_policies = {
+      AmazonSSMManagedInstanceCore   = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+      AmazonEKSClusterPolicy         = "arn:aws:iam::aws:policy/AmazonEKSClusterPolicy"
+      AmazonEKSVPCResourceController = "arn:aws:iam::aws:policy/AmazonEKSVPCResourceController"
+    }
+  }
+  */
 }
 
 # List of self managed node groups
@@ -224,8 +258,8 @@ self_managed_node_groups = {
     name                        = "others"
     launch_template_description = "Node group for others"
     instance_type               = "c5.large"
-    min_size                    = 0
-    desired_size                = 0
+    min_size                    = 1
+    desired_size                = 1
     max_size                    = 5
     force_delete                = true
     force_delete_warm_pool      = true
@@ -268,6 +302,7 @@ self_managed_node_groups = {
       AmazonSSMManagedInstanceCore = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
     }
   }
+
 }
 
 # List of fargate profiles
@@ -290,7 +325,7 @@ elasticache = {
   num_cache_clusters = 2
 }
 
-#s3_os = {}
+# s3_os = {}
 
 mq = {
   engine_type        = "ActiveMQ"
@@ -325,11 +360,12 @@ node_exporter = {
   node_selector = {}
 }
 
-windows_exporter = {
+#node exporter for windows
+/* windows_exporter = {
   node_selector = {
-    "plateform" = "windows"
+    "platform" = "windows"
   }
-}
+} */
 
 prometheus = {
   node_selector = { service = "metrics" }
@@ -364,9 +400,19 @@ fluent_bit = {
   is_daemonset  = true
   node_selector = {}
 }
+/*
+fluent_bit_windows = {
+  is_daemonset = true
+  #image_name   = "fluent/fluent-bit"
+  image_tag = "windows-2022-3.2.0"
+  node_selector_windows = {
+    "platform" = "windows"
+  }
+}
+*/
 
 # Logging level
-logging_level = "Information"
+logging_level = "Debug"
 
 # Parameters of control plane
 control_plane = {
@@ -380,6 +426,14 @@ control_plane = {
   }
   default_partition = "default"
   node_selector     = { service = "control-plane" }
+  /*
+  node_selector     = { 
+  service = "control-plane"
+  "platform"           = "windows"
+  "kubernetes.io/os"   = "windows"
+  "kubernetes.io/arch" = "amd64"
+  }
+  */
 }
 
 # Parameters of admin GUI
@@ -399,7 +453,9 @@ admin_gui = {
 compute_plane = {
   # Default partition that uses the C# extension for the worker
   default = {
-    node_selector = { service = "workers" }
+    node_selector = {
+      service = "workers"
+    }
     # number of replicas for each deployment of compute plane
     replicas = 1
     # ArmoniK polling agent
@@ -558,6 +614,13 @@ compute_plane = {
   # Partition for the htcmock worker
   htcmock = {
     node_selector = { service = "workers" }
+    /*
+    node_selector = {
+      "platform"           = "windows"
+      "kubernetes.io/os"   = "windows"
+      "kubernetes.io/arch" = "amd64"
+    }
+*/
     # number of replicas for each deployment of compute plane
     replicas = 1
     # ArmoniK polling agent
