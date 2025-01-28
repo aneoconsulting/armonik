@@ -711,11 +711,11 @@ configurations = {
   jobs = { env = { MongoDB__DataRetention = "1.00:00:00" } }
 }
 
-
-
 environment_description = {
   name        = "aws-dev"
   version     = "0.0.0"
   description = "AWS environment"
   color       = "#80ff80"
 }
+
+upload_images = false

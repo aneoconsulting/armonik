@@ -44,6 +44,17 @@ module "eks" {
   efs_csi_external_provisioner_tag    = local.ecr_images["${var.eks.docker_images.efs_csi_external_provisioner.image}:${try(coalesce(var.eks.docker_images.efs_csi_external_provisioner.tag), "")}"].tag
   efs_csi_version                     = try(coalesce(var.eks.efs_csi.version), var.helm_charts.efs_csi_driver.version)
   efs_csi_repository                  = try(coalesce(var.eks.efs_csi.repository), var.helm_charts.efs_csi_driver.repository)
+  
+  ebs_csi_image                       = "amazon/aws-ebs-csi-driver"
+  ebs_csi_tag                         = "v1.39.0"
+  ebs_csi_liveness_probe_image        = "public.ecr.aws/eks-distro/kubernetes-csi/livenessprobe"
+  ebs_csi_liveness_probe_tag          = "v2.14.0-eks-1-31-12"
+  ebs_csi_node_driver_registrar_image = "public.ecr.aws/eks-distro/kubernetes-csi/node-driver-registrar"
+  ebs_csi_node_driver_registrar_tag   = "v2.13.0-eks-1-31-12"
+  ebs_csi_external_provisioner_image  = "public.ecr.aws/eks-distro/kubernetes-csi/external-provisioner"
+  ebs_csi_external_provisioner_tag    = "v5.1.0-eks-1-31-12"
+  ebs_csi_repository                  = "https://kubernetes-sigs.github.io/aws-ebs-csi-driver/"
+  ebs_csi_version                     = "2.39.1"
 
   cluster_log_kms_key_id    = local.kms_key
   cluster_encryption_config = local.kms_key
