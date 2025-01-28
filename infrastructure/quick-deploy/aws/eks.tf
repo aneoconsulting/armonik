@@ -34,16 +34,32 @@ module "eks" {
   instance_refresh_repository = try(coalesce(var.eks.instance_refresh.repository), var.helm_charts.termination_handler.repository)
   instance_refresh_namespace  = var.eks.instance_refresh.namespace
 
-  efs_csi_image                       = local.ecr_images["${var.eks.docker_images.efs_csi.image}:${try(coalesce(var.eks.docker_images.efs_csi.tag), "")}"].image
-  efs_csi_tag                         = local.ecr_images["${var.eks.docker_images.efs_csi.image}:${try(coalesce(var.eks.docker_images.efs_csi.tag), "")}"].tag
-  efs_csi_liveness_probe_image        = local.ecr_images["${var.eks.docker_images.efs_csi_liveness_probe.image}:${try(coalesce(var.eks.docker_images.efs_csi_liveness_probe.tag), "")}"].image
-  efs_csi_liveness_probe_tag          = local.ecr_images["${var.eks.docker_images.efs_csi_liveness_probe.image}:${try(coalesce(var.eks.docker_images.efs_csi_liveness_probe.tag), "")}"].tag
-  efs_csi_node_driver_registrar_image = local.ecr_images["${var.eks.docker_images.efs_csi_node_driver_registrar.image}:${try(coalesce(var.eks.docker_images.efs_csi_node_driver_registrar.tag), "")}"].image
-  efs_csi_node_driver_registrar_tag   = local.ecr_images["${var.eks.docker_images.efs_csi_node_driver_registrar.image}:${try(coalesce(var.eks.docker_images.efs_csi_node_driver_registrar.tag), "")}"].tag
-  efs_csi_external_provisioner_image  = local.ecr_images["${var.eks.docker_images.efs_csi_external_provisioner.image}:${try(coalesce(var.eks.docker_images.efs_csi_external_provisioner.tag), "")}"].image
-  efs_csi_external_provisioner_tag    = local.ecr_images["${var.eks.docker_images.efs_csi_external_provisioner.image}:${try(coalesce(var.eks.docker_images.efs_csi_external_provisioner.tag), "")}"].tag
-  efs_csi_version                     = try(coalesce(var.eks.efs_csi.version), var.helm_charts.efs_csi_driver.version)
-  efs_csi_repository                  = try(coalesce(var.eks.efs_csi.repository), var.helm_charts.efs_csi_driver.repository)
+  efs_csi = {
+    image      = local.ecr_images["${var.eks.docker_images.efs_csi.image}:${try(coalesce(var.eks.docker_images.efs_csi.tag), "")}"].image
+    tag        = local.ecr_images["${var.eks.docker_images.efs_csi.image}:${try(coalesce(var.eks.docker_images.efs_csi.tag), "")}"].tag
+    repository = try(coalesce(var.eks.efs_csi.repository), var.helm_charts.efs_csi_driver.repository)
+    version    = try(coalesce(var.eks.efs_csi.version), var.helm_charts.efs_csi_driver.version)
+  }
+
+  ebs_csi = {
+    image      = local.ecr_images["${var.eks.docker_images.ebs_csi.image}:${try(coalesce(var.eks.docker_images.ebs_csi.tag), "")}"].image
+    tag        = local.ecr_images["${var.eks.docker_images.ebs_csi.image}:${try(coalesce(var.eks.docker_images.ebs_csi.tag), "")}"].tag
+    repository = try(coalesce(var.eks.ebs_csi.repository), var.helm_charts.ebs_csi_driver.repository)
+    version    = try(coalesce(var.eks.ebs_csi.version), var.helm_charts.ebs_csi_driver.version)
+  }
+
+  csi_liveness_probe = {
+    image = local.ecr_images["${var.eks.docker_images.csi_liveness_probe.image}:${try(coalesce(var.eks.docker_images.csi_liveness_probe.tag), "")}"].image
+    tag   = local.ecr_images["${var.eks.docker_images.csi_liveness_probe.image}:${try(coalesce(var.eks.docker_images.csi_liveness_probe.tag), "")}"].tag
+  }
+  csi_node_driver_registrar = {
+    image = local.ecr_images["${var.eks.docker_images.csi_node_driver_registrar.image}:${try(coalesce(var.eks.docker_images.csi_node_driver_registrar.tag), "")}"].image
+    tag = local.ecr_images["${var.eks.docker_images.csi_node_driver_registrar.image}:${try(coalesce(var.eks.docker_images.csi_node_driver_registrar.tag), "")}"].tag
+  }
+  csi_external_provisioner = {
+    image = local.ecr_images["${var.eks.docker_images.csi_external_provisioner.image}:${try(coalesce(var.eks.docker_images.csi_external_provisioner.tag), "")}"].image
+    tag = local.ecr_images["${var.eks.docker_images.csi_external_provisioner.image}:${try(coalesce(var.eks.docker_images.csi_external_provisioner.tag), "")}"].tag
+  }
 
   cluster_log_kms_key_id    = local.kms_key
   cluster_encryption_config = local.kms_key
