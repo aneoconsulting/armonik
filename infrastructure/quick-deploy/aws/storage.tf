@@ -170,6 +170,7 @@ module "mongodb" {
 
   persistent_volume = var.mongodb.persistent_volume != null ? {
     storage_provisioner = var.mongodb.persistent_volume.storage_provisioner
+    access_mode         = var.mongodb.persistent_volume.acces_mode
     volume_binding_mode = var.mongodb.persistent_volume.volume_binding_mode
     resources           = var.mongodb.persistent_volume.resources
     parameters = merge(var.mongodb.persistent_volume.parameters, try(var.mongodb.persistent_volume.storage_provisioner, "") == "efs.csi.aws.com" ? {
@@ -239,41 +240,44 @@ module "mongodb_sharded" {
     router    = try(coalesce(var.mongodb_sharding.router.labels), null)
   }
 
-  persistence = var.mongodb.persistent_volume != null ? {
-    shards = {
-      storage_provisioner = var.mongodb.persistent_volume.storage_provisioner
-      volume_binding_mode = var.mongodb.persistent_volume.volume_binding_mode
-      resources           = var.mongodb.persistent_volume.resources
-      parameters = merge(var.mongodb.persistent_volume.parameters, try(var.mongodb.persistent_volume.storage_provisioner, "") == "efs.csi.aws.com" ? {
-        provisioningMode = "efs-ap"
-        fileSystemId     = module.mongodb_efs_persistent_volume[0].id
-        directoryPerms   = "755"
-        uid              = var.mongodb.security_context.run_as_user # optional
-        gid              = var.mongodb.security_context.fs_group    # optional
-        basePath         = "/mongodb"                               # optional
-      } : {})
-    }
+  persistence = can(try(coalesce(var.mongodb_sharding.persistence), coalesce(var.mongodb.persistent_volume))) ? {
+    shards = can(try(coalesce(var.mongodb_sharding.persistence.shards), coalesce(var.mongodb.persistent_volume))) ? {
+      storage_provisioner = try(coalesce(var.mongodb_sharding.persistence.shards.storage_provisioner), coalesce(var.mongodb.persistent_volume.storage_provisioner), null)
+      volume_binding_mode = try(coalesce(var.mongodb_sharding.persistence.shards.volume_binding_mode), coalesce(var.mongodb.persistent_volume.volume_binding_mode), null)
+      resources           = try(coalesce(var.mongodb_sharding.persistence.shards.resources), coalesce(var.mongodb.persistent_volume.resources), null)
+      parameters          = local.mongodb_storage_class_parameters
+    } : null
 
-    configsvr = {
-      storage_provisioner = var.mongodb.persistent_volume.storage_provisioner
-      volume_binding_mode = var.mongodb.persistent_volume.volume_binding_mode
-      resources           = var.mongodb.persistent_volume.resources
-      parameters = merge(var.mongodb.persistent_volume.parameters, try(var.mongodb.persistent_volume.storage_provisioner, "") == "efs.csi.aws.com" ? {
-        provisioningMode = "efs-ap"
-        fileSystemId     = module.mongodb_efs_persistent_volume[0].id
-        directoryPerms   = "755"
-        uid              = var.mongodb.security_context.run_as_user # optional
-        gid              = var.mongodb.security_context.fs_group    # optional
-        basePath         = "/mongodb"                               # optional
-      } : {})
-    }
+    configsvr = can(coalesce(var.mongodb_sharding.persistence.configsvr)) ? {
+      storage_provisioner = var.mongodb_sharding.persistence.configsvr.storage_provisioner
+      volume_binding_mode = var.mongodb_sharding.persistence.configsvr.volume_binding_mode
+      resources           = var.mongodb_sharding.persistence.configsvr.resources
+      parameters          = local.configsvr_storage_class_parameters
+    } : null
   } : null
 }
 
 module "mongodb_efs_persistent_volume" {
-  count                           = (try(var.mongodb.persistent_volume.storage_provisioner, "") == "efs.csi.aws.com" ? 1 : 0)
+  count                           = try(coalesce(var.mongodb_sharding.persistence.shards.storage_provisioner), coalesce(var.mongodb.persistent_volume.storage_provisioner), "") == "efs.csi.aws.com" ? 1 : 0
   source                          = "./generated/infra-modules/storage/aws/efs"
   name                            = "${local.prefix}-mongodb"
+  kms_key_id                      = try(coalesce(var.mongodb_efs.kms_key_id), local.kms_key)
+  performance_mode                = var.mongodb_efs.performance_mode
+  throughput_mode                 = var.mongodb_efs.throughput_mode
+  provisioned_throughput_in_mibps = var.mongodb_efs.provisioned_throughput_in_mibps
+  transition_to_ia                = var.mongodb_efs.transition_to_ia
+  access_point                    = var.mongodb_efs.access_point
+  vpc_id                          = local.vpc.id
+  vpc_cidr_blocks                 = local.vpc.cidr_blocks
+  vpc_cidr_block_private          = local.vpc.cidr_block_private
+  vpc_subnet_ids                  = local.vpc.subnet_ids
+  tags                            = local.tags
+}
+
+module "configsvr_efs_persistent_volume" {
+  count                           = (try(var.mongodb_sharding.persistence.configsvr.storage_provisioner, "") == "efs.csi.aws.com" ? 1 : 0)
+  source                          = "./generated/infra-modules/storage/aws/efs"
+  name                            = "${local.prefix}-mongodb-configsvr"
   kms_key_id                      = try(coalesce(var.mongodb_efs.kms_key_id), local.kms_key)
   performance_mode                = var.mongodb_efs.performance_mode
   throughput_mode                 = var.mongodb_efs.throughput_mode
@@ -395,4 +399,39 @@ locals {
     use_chunk_encoding    = true
     use_check_sum         = true
   }
+
+  # Ensures some mandatory storage class parameters are effectively passed when persistence is enabled
+  mongodb_storage_class_parameters = merge(
+    try(coalesce(var.mongodb_sharding.persistence.shards.storage_provisioner), coalesce(var.mongodb.persistent_volume.storage_provisioner), "") == "efs.csi.aws.com" ? {
+      provisioningMode = "efs-ap"
+      fileSystemId     = module.mongodb_efs_persistent_volume[0].id
+      directoryPerms   = "755"
+      uid              = var.mongodb.security_context.run_as_user # optional
+      gid              = var.mongodb.security_context.fs_group    # optional
+      basePath         = "/mongodb"                               # optional
+    } : try(coalesce(var.mongodb_sharding.persistence.shards.storage_provisioner), coalesce(var.mongodb.persistent_volume.storage_provisioner), "") == "ebs.csi.aws.com" ?
+    {
+      "csi.storage.k8s.io/fstype" = "xfs"
+      "type"                      = "gp3"
+      "iopsPerGB"                 = 500
+    } : null,
+    try(coalesce(var.mongodb_sharding.persistence.shards.parameters), coalesce(var.mongodb.persistent_volume.parameters), null)
+  )
+
+  configsvr_storage_class_parameters = merge(
+    try(var.mongodb_sharding.persistence.configsvr.storage_provisioner, "") == "efs.csi.aws.com" ? {
+      provisioningMode = "efs-ap"
+      fileSystemId     = module.configsvr_efs_persistent_volume[0].id
+      directoryPerms   = "755"
+      uid              = var.mongodb.security_context.run_as_user # optional
+      gid              = var.mongodb.security_context.fs_group    # optional
+      basePath         = "/mongodb"                               # optional
+    } : try(var.mongodb_sharding.persistence.configsvr.storage_provisioner, "") == "ebs.csi.aws.com" ?
+    {
+      "csi.storage.k8s.io/fstype" = "ext4"
+      "type"                      = "gp3"
+      "iopsPerGB"                 = 200
+    } : null,
+    try(var.mongodb_sharding.persistence.configsvr.parameters, null)
+  )
 }
