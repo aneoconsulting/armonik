@@ -256,6 +256,23 @@ jobs:
               -e HtcMock__EnableFastCompute=true \
               -e HtcMock__Partition="htcmock" \
               dockerhubaneo/armonik_core_htcmock_test_client:${{ steps.core.outputs.tag }}
+      - name: Test HTC Mock TCP - 10 levels
+        shell: bash
+        run: |
+            set -ex
+            export CONTROL_PLANE_URL=$(cat infrastructure/quick-deploy/localhost/all-in-one/generated/armonik-output.json | jq -r '.armonik.control_plane_url')
+            docker run --rm \
+              -e GrpcClient__Endpoint="${CONTROL_PLANE_URL}" \
+              -e HtcMock__NTasks=1000 \
+              -e HtcMock__TotalCalculationTime=00:00:00.100 \
+              -e HtcMock__DataSize=1 \
+              -e HtcMock__MemorySize=1 \
+              -e HtcMock__SubTasksLevels=10 \
+              -e HtcMock__EnableUseLowMem=true \
+              -e HtcMock__EnableSmallOutput=true \
+              -e HtcMock__EnableFastCompute=true \
+              -e HtcMock__Partition="htcmocktcp" \
+              dockerhubaneo/armonik_core_htcmock_test_client:${{ steps.core.outputs.tag }}
       - name: Show logs
         if: always()
         run: |
