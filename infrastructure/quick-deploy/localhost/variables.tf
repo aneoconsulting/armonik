@@ -477,6 +477,7 @@ variable "compute_plane" {
     node_selector                    = optional(any, {})
     annotations                      = optional(any, {})
     service_account_name             = optional(string, "")
+    socket_type                      = optional(string, "unixdomainsocket")
     polling_agent = object({
       image             = optional(string, "dockerhubaneo/armonik_pollingagent")
       tag               = optional(string)
