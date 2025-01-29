@@ -1,4 +1,3 @@
-```md
 # Benchmarking ArmoniK on GCP
 
 In this document, we describe the process of benchmarking ArmoniK on Google Cloud Platform (GCP).
@@ -53,4 +52,3 @@ Do not forget to destroy the infrastructure after the benchmarking is done to av
 ## Conclusion
 
 This document provides a comprehensive guide to benchmarking ArmoniK on GCP. By following the steps outlined, you can reproduce the benchmark infrastructure and execute the tests as described in the [Test Plan](../3.benchmarking/0.test-plan.md).
-```
