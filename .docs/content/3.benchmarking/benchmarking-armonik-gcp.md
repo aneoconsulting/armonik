@@ -6,10 +6,6 @@ In this document, we describe the process of benchmarking ArmoniK on Google Clou
 
 This guide provides detailed steps to set up and execute benchmarks for ArmoniK on GCP. The benchmarks follow the [Test Plan](../3.benchmarking/0.test-plan.md).
 
-## Base Commit Used
-
-COMMIT SHA: [hash]()
-
 ## Infrastructure Setup
 
 The infrastructure setup is based on Terraform configurations. The reference infrastructure is used for routine benchmarks with each ArmoniK release.
@@ -17,6 +13,7 @@ The infrastructure setup is based on Terraform configurations. The reference inf
 ### How to Reproduce the Original Benchmark Infrastructure?
 
 1. Navigate to the GCP quick-deploy directory:
+
     ```shell
     cd ../../infrastructure/quick-deploy/gcp
     ```
@@ -24,6 +21,7 @@ The infrastructure setup is based on Terraform configurations. The reference inf
 2. Modify the `REGION` variable in the Makefile to the desired region where the infrastructure and machines will be deployed. For our benchmarks, we used `us-central1`, which should also be specified in the `parameters.tfvars` file.
 
 3. Launch the deployment command:
+
     ```shell
     make deploy PARAMETERS_FILE=benchmarking/gcp/parameters.tfvars VERSIONS_FILE=benchmarking/gcp/versions.tfvars.json
     ```
