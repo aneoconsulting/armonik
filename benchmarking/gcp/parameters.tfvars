@@ -176,7 +176,7 @@ gke = {
     },
     {
       name             = "state-database"
-      machine_type     = "c2d-highcpu-32"
+      machine_type     = "c2d-highcpu-56"
       image_type       = "COS_CONTAINERD"
       min_cpu_platform = ""
       # or see https://cloud.google.com/compute/docs/instances/specify-min-cpu-platform#availablezones
@@ -245,14 +245,26 @@ keda = {
   node_selector = { service = "monitoring" }
 }
 
-activemq = {}
+activemq = {
+  node_selector = { service = "state-database" }
+  limits = {
+    cpu    = "4000m"
+    memory = "16Gi"
+  }
+  requests = {
+    cpu    = "4000m"
+    memory = "16Gi"
+  }
+  activemq_opts_memory = "-Xms1g -Xmx3g"
+}
+
 
 mongodb = {
   node_selector = { service = "state-database" }
   replicas      = 2
   mongodb_resources = {
     limits = {
-      "cpu"               = "26"
+      "cpu"               = "23"
       "memory"            = "50Gi"
       "ephemeral-storage" = "20Gi"
     }
@@ -406,7 +418,6 @@ authentication = {
 configurations = {
   core = {
     env = {
-      Amqp__AllowHostMismatch = true
       Amqp__AllowHostMismatch                    = true
       Amqp__MaxPriority                          = "10"
       Amqp__MaxRetries                           = "5"
