@@ -315,6 +315,7 @@ variable "mongodb" {
 
     persistent_volume = optional(object({
       storage_provisioner = string
+      acces_mode = optional(list(string), ["ReadWriteOnce"])
       volume_binding_mode = optional(string, "Immediate")
       parameters          = optional(map(string), {})
       #Resources for PVC

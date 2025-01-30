@@ -300,6 +300,22 @@ mq = {
 
 mongodb = {
   node_selector = { service = "state-database" }
+  persistent_volume = {
+    storage_provisioner = "ebs.csi.aws.com"
+    volume_binding_mode = "WaitForFirstConsumer"
+    access_mode = ["ReadWriteOnce"]
+    parameters = {
+      "csi.storage.k8s.io/fstype" = "ext4"
+      "type" = "io1"
+      "throughput" = 200
+      "iops" = 5000
+    }
+    resources = {
+      requests = {
+        storage = "10Gi"
+      }
+    }
+  }
 }
 
 # Nullify to disable sharding, each nullification of subobject will result in the use of default values 

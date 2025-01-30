@@ -170,6 +170,7 @@ module "mongodb" {
 
   persistent_volume = var.mongodb.persistent_volume != null ? {
     storage_provisioner = var.mongodb.persistent_volume.storage_provisioner
+    access_mode         = var.mongodb.persistent_volume.acces_mode
     volume_binding_mode = var.mongodb.persistent_volume.volume_binding_mode
     resources           = var.mongodb.persistent_volume.resources
     parameters = merge(var.mongodb.persistent_volume.parameters, try(var.mongodb.persistent_volume.storage_provisioner, "") == "efs.csi.aws.com" ? {
