@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dotnet/docfx/main/schemas/docfx.schema.json",
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": ".",
+          "files": [
+            "**/*.csproj"
+          ],
+          "exclude":[
+            "**/tests/*.csproj"
+          ]
+        }
+      ],
+      "outputFormat": "markdown",
+      "output": ".docs/content/armonik",
+      "namespaceLayout": "nested"
+    }
+  ]
+}

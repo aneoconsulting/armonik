@@ -22,3 +22,7 @@ generated
 *~
 *.pem
 .database
+
+# Documentation artifacts
+build/
+.venv-doc

@@ -1,6 +1,6 @@
 # ClientLargeTasks State Diagram
 
-<Mermaid>
+```mermaid
 stateDiagram-v2
     [*] --> GrpcStreamOpened
     GrpcStreamOpened --> OpenedSession:InitRequest
@@ -15,4 +15,4 @@ stateDiagram-v2
     PayloadTransfert --> Error:*
     Error --> GrpcStreamClosed
     GrpcStreamClosed --> [*]
-</Mermaid>
+```

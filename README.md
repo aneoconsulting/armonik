@@ -1,33 +1,34 @@
-# ArmoniK
+# ArmoniK.Core Docs
 
-![GitHub tag (latest SemVer pre-release)](https://img.shields.io/github/v/tag/aneoconsulting/ArmoniK?color=fe5001&label=latest%20version&sort=semver)
- ![GitHub](https://img.shields.io/github/license/aneoconsulting/ArmoniK)
+Docs for ArmoniK.Core
 
-<em>ArmoniK</em> is a high throughput compute grid project using Kubernetes. The project provides a reference
-architecture that can be used to build and adapt a modern high throughput compute solution on-premise or using Cloud
-services, allowing users to submit high volumes of short and long-running tasks and scaling environments dynamically.
+## Installation
 
-## Documentation
+> Be aware to be at the root of the repository
 
-Please, read [documentation](https://aneoconsulting.github.io/ArmoniK/) for more information about ArmoniK.
+```bash
+python -m venv .venv-doc
+```
 
-- 👉 [ArmoniK Architecture](https://aneoconsulting.github.io/ArmoniK/armonik)
-- 👉 [ArmoniK Versions](https://aneoconsulting.github.io/ArmoniK/armonik#versions)
-- 👉 [ArmoniK Installation](https://aneoconsulting.github.io/ArmoniK/installation)
-- 👉 [ArmoniK Configuration](https://aneoconsulting.github.io/ArmoniK/guide/how-to/how-to-configure-authentication)
-- 👉 [ArmoniK Performance](https://aneoconsulting.github.io/ArmoniK/benchmarking/test-plan)
+Then activate the virtual environment:
 
+```bash
+source .venv-doc/bin/activate
+```
 
-## Bug
+And install dependencies:
 
-You are welcome to raise issues on GitHub. Please, read our [community guidelines](https://aneoconsulting.github.io/ArmoniK.Community/) before doing so.
+```bash
+pip install -r .docs/requirements.txt
+```
 
-You can also send us a direct email at [armonik-support@aneo.fr](mailto:armonik-support@aneo.fr).
+## Usage
 
-## Acknowledge
+To build the docs locally, run the following command:
 
-This project was funded by AWS and started with their [HTCGrid project](https://awslabs.github.io/aws-htc-grid/).
+```bash
+tools/generate-csharp-doc.sh
+sphinx-build -M html .docs build
+```
 
-## License
-
-[Apache License, Version 2.0](https://github.com/aneoconsulting/ArmoniK/blob/main/LICENSE)
+Outputs can be found in `build/html/index.html`.

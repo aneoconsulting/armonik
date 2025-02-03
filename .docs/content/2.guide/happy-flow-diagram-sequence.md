@@ -1,6 +1,6 @@
 # Happy Flow Diagram Sequence
 
-<Mermaid>
+```mermaid
 sequenceDiagram
     #title ArmoniK Happy Flow Sequence
     Client-->>Client:Generate GUID for session
@@ -72,4 +72,4 @@ sequenceDiagram
     Submitter->>ResultStorage:Get Result
     Submitter->>Client:Result
     deactivate Client
-</Mermaid>
+```

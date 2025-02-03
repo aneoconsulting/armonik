@@ -2,7 +2,7 @@
 
 ## Client
 
-<Mermaid>
+```mermaid
 stateDiagram-v2
     [*] --> GrpcStreamOpened
     GrpcStreamOpened --> SendComputeRequest:ComputeRequest
@@ -62,4 +62,4 @@ stateDiagram-v2
     }
     DirectDataRequestReception --> Listening
     GrpcStreamClosed --> [*]
-</Mermaid>
+```
