@@ -1,2 +1,2 @@
-armonik==3.21.0
+armonik==3.24.0
 argparse==1.4.0
