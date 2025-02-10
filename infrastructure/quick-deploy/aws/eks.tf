@@ -54,11 +54,11 @@ module "eks" {
   }
   csi_node_driver_registrar = {
     image = local.ecr_images["${var.eks.docker_images.csi_node_driver_registrar.image}:${try(coalesce(var.eks.docker_images.csi_node_driver_registrar.tag), "")}"].image
-    tag = local.ecr_images["${var.eks.docker_images.csi_node_driver_registrar.image}:${try(coalesce(var.eks.docker_images.csi_node_driver_registrar.tag), "")}"].tag
+    tag   = local.ecr_images["${var.eks.docker_images.csi_node_driver_registrar.image}:${try(coalesce(var.eks.docker_images.csi_node_driver_registrar.tag), "")}"].tag
   }
   csi_external_provisioner = {
     image = local.ecr_images["${var.eks.docker_images.csi_external_provisioner.image}:${try(coalesce(var.eks.docker_images.csi_external_provisioner.tag), "")}"].image
-    tag = local.ecr_images["${var.eks.docker_images.csi_external_provisioner.image}:${try(coalesce(var.eks.docker_images.csi_external_provisioner.tag), "")}"].tag
+    tag   = local.ecr_images["${var.eks.docker_images.csi_external_provisioner.image}:${try(coalesce(var.eks.docker_images.csi_external_provisioner.tag), "")}"].tag
   }
 
   cluster_log_kms_key_id    = local.kms_key

@@ -301,9 +301,10 @@ mq = {
 mongodb = {
   node_selector = { service = "state-database" }
   # persistent_volume = {
+  #   storage_provisioner = "ebs.csi.aws.com"
   #   parameters = {
   #     "throughput" = 200
-  #     "iopsPerGB" = 500
+  #     "iopsPerGB"  = 500
   #   }
   #   resources = {
   #     requests = {
@@ -322,19 +323,19 @@ mongodb = {
 #   configsvr = {
 #     replicas = 2
 #   }
+#   router = {
+#     replicas = 2
+#   }
 #   persistence = {
 #     shards = {
 #       resources = {
 #         requests = {
-#           storage = "10Gi"
-#         }
-#         limits = {
-#           storage = "50Gi"
+#           storage = "20Gi"
 #         }
 #       }
 #     }
 #     configsvr = {
-#       storage_provisioner = "efs.csi.aws.com"
+#       storage_provisioner = "ebs.csi.aws.com"
 #     }
 #   }
 # }
