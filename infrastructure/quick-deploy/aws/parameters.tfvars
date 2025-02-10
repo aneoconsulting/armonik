@@ -301,13 +301,10 @@ mq = {
 mongodb = {
   node_selector = { service = "state-database" }
   # persistent_volume = {
-  #   storage_provisioner = "ebs.csi.aws.com"
-  #   volume_binding_mode = "WaitForFirstConsumer"
-  #   access_mode         = ["ReadWriteOnce"]
-  #   # parameters = {
-  #   #   "throughput" = 200
-  #   #   "iopsPerGB" = 5000
-  #   # }
+  #   parameters = {
+  #     "throughput" = 200
+  #     "iopsPerGB" = 500
+  #   }
   #   resources = {
   #     requests = {
   #       storage = "10Gi"
@@ -317,20 +314,30 @@ mongodb = {
 }
 
 # Nullify to disable sharding, each nullification of subobject will result in the use of default values 
-mongodb_sharding = {
-  # persistence = {
-  #   shards = {
-  #     resources = {
-  #       requests = {
-  #         storage = "10Gi"
-  #       }
-  #       limits = {
-  #         storage = "50Gi"
-  #       }
-  #     }
-  #   }
-  # }
-}
+# mongodb_sharding = {
+#   shards = {
+#     replicas = 2
+#     quantity = 2
+#   }
+#   configsvr = {
+#     replicas = 2
+#   }
+#   persistence = {
+#     shards = {
+#       resources = {
+#         requests = {
+#           storage = "10Gi"
+#         }
+#         limits = {
+#           storage = "50Gi"
+#         }
+#       }
+#     }
+#     configsvr = {
+#       storage_provisioner = "efs.csi.aws.com"
+#     }
+#   }
+# }
 
 seq = {
   node_selector = { service = "monitoring" }

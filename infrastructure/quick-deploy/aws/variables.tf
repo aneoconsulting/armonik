@@ -332,6 +332,7 @@ variable "mongodb" {
     persistent_volume = optional(object({
       storage_provisioner = optional(string, "ebs.csi.aws.com")
       acces_mode          = optional(list(string), ["ReadWriteOnce"])
+      reclaim_policy      = optional(string, "Delete")
       volume_binding_mode = optional(string, "WaitForFirstConsumer")
       parameters          = optional(map(string), {})
       #Resources for PVC
