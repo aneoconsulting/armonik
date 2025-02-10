@@ -171,6 +171,7 @@ module "mongodb" {
   persistent_volume = var.mongodb.persistent_volume != null ? {
     storage_provisioner = var.mongodb.persistent_volume.storage_provisioner
     access_mode         = var.mongodb.persistent_volume.acces_mode
+    reclaim_policy      = var.mongodb.persistent_volume.reclaim_policy
     volume_binding_mode = var.mongodb.persistent_volume.volume_binding_mode
     resources           = var.mongodb.persistent_volume.resources
     parameters = merge(var.mongodb.persistent_volume.parameters, try(var.mongodb.persistent_volume.storage_provisioner, "") == "efs.csi.aws.com" ? {
@@ -244,6 +245,7 @@ module "mongodb_sharded" {
     shards = can(try(coalesce(var.mongodb_sharding.persistence.shards), coalesce(var.mongodb.persistent_volume))) ? {
       storage_provisioner = try(coalesce(var.mongodb_sharding.persistence.shards.storage_provisioner), coalesce(var.mongodb.persistent_volume.storage_provisioner), null)
       volume_binding_mode = try(coalesce(var.mongodb_sharding.persistence.shards.volume_binding_mode), coalesce(var.mongodb.persistent_volume.volume_binding_mode), null)
+      reclaim_policy      = try(coalesce(var.mongodb_sharding.persistence.shards.reclaim_policy), coalesce(var.mongodb.persistent_volume.reclaim_policy), null)
       resources           = try(coalesce(var.mongodb_sharding.persistence.shards.resources), coalesce(var.mongodb.persistent_volume.resources), null)
       parameters          = local.mongodb_storage_class_parameters
     } : null
@@ -251,6 +253,7 @@ module "mongodb_sharded" {
     configsvr = can(coalesce(var.mongodb_sharding.persistence.configsvr)) ? {
       storage_provisioner = var.mongodb_sharding.persistence.configsvr.storage_provisioner
       volume_binding_mode = var.mongodb_sharding.persistence.configsvr.volume_binding_mode
+      reclaim_policy      = var.mongodb_sharding.persistence.configsvr.reclaim_policy
       resources           = var.mongodb_sharding.persistence.configsvr.resources
       parameters          = local.configsvr_storage_class_parameters
     } : null
