@@ -301,9 +301,10 @@ mq = {
 mongodb = {
   node_selector = { service = "state-database" }
   # persistent_volume = {
+  #   storage_provisioner = "ebs.csi.aws.com"
   #   parameters = {
   #     "throughput" = 200
-  #     "iopsPerGB" = 500
+  #     "iopsPerGB"  = 500
   #   }
   #   resources = {
   #     requests = {
