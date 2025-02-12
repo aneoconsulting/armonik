@@ -2,6 +2,6 @@
   "name": "mongodb-scripts",
   "description": "Scripts use to populate mongodb with fake data",
   "dependencies": {
-    "@faker-js/faker": "^8.4.1"
+    "@faker-js/faker": "^9.5.0"
   }
 }
