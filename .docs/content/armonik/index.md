@@ -14,7 +14,7 @@ This project is an Open Source ([Apache 2.0 License](https://github.com/aneocons
 ```
 
 Here is an overview of how Armonik works:
-![Armonik overview diagram](/architecture-ArmoniK-internals.svg)
+![Armonik overview diagram](./architecture-ArmoniK-internals.svg)
 
 ## When should I use ArmoniK
 

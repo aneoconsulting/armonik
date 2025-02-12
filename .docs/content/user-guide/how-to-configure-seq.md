@@ -3,7 +3,7 @@
 If you want to access outside your Kubernetes cluster, you have to configure Seq to make it accessible from the outside.
 Edit the [parameters.tfvars](https://github.com/aneoconsulting/ArmoniK/blob/main/infrastructure/quick-deploy/localhost/parameters.tfvars), and edit the `seq` section (or add it if not present). Add the `service_type` option:
 
-```tfvars
+```hcl
 seq = {
   service_type = "LoadBalancer"
 }

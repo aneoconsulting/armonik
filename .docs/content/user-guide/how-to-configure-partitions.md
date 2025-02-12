@@ -233,7 +233,7 @@ Follow the HelloWorld tutorial [here](https://github.com/aneoconsulting/ArmoniK/
     # ArmoniK workers
     worker = [
       {
-        image = hello
+        image = "hello"
         tag = "latest"
         limits = {
           cpu    = "1000m"
@@ -262,7 +262,7 @@ Follow the HelloWorld tutorial [here](https://github.com/aneoconsulting/ArmoniK/
         {
           type      = "prometheus"
           threshold = 2
-        },
+        }
       ]
     }
   },

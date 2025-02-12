@@ -118,7 +118,7 @@ compute_plane = {
   partition4 = {
     worker = [{
         image = "custom_worker"
-        tag   = "0.1.0
+        tag   = "0.1.0"
       }]
   }
 }

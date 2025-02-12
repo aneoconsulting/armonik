@@ -47,7 +47,7 @@ See the example [here](https://github.com/aneoconsulting/ArmoniK/blob/main/.docs
 
    Open the Debug property and add as arguments using the command line:
 
-   ```args
+   ```bash
    --endpoint "http://<ip>:5001" --partition <partition name>
    ```
 
