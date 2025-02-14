@@ -105,15 +105,19 @@ variable "eks" {
         image = optional(string, "public.ecr.aws/efs-csi-driver/amazon/aws-efs-csi-driver")
         tag   = optional(string)
       }), {})
-      efs_csi_liveness_probe = optional(object({
+      ebs_csi = optional(object({
+        image = optional(string, "public.ecr.aws/ebs-csi-driver/aws-ebs-csi-driver")
+        tag   = optional(string)
+      }), {})
+      csi_liveness_probe = optional(object({
         image = optional(string, "public.ecr.aws/eks-distro/kubernetes-csi/livenessprobe")
         tag   = optional(string)
       }), {})
-      efs_csi_node_driver_registrar = optional(object({
+      csi_node_driver_registrar = optional(object({
         image = optional(string, "public.ecr.aws/eks-distro/kubernetes-csi/node-driver-registrar")
         tag   = optional(string)
       }), {})
-      efs_csi_external_provisioner = optional(object({
+      csi_external_provisioner = optional(object({
         image = optional(string, "public.ecr.aws/eks-distro/kubernetes-csi/external-provisioner")
         tag   = optional(string)
       }), {})
@@ -138,6 +142,18 @@ variable "eks" {
     efs_csi = optional(object({
       repository = optional(string)
       version    = optional(string)
+    }), {})
+    ebs_csi = optional(object({
+      repository = optional(string)
+      version    = optional(string)
+      controller_resources = optional(object({
+        limits = optional(object({
+          storage = string
+        }))
+        requests = optional(object({
+          storage = string
+        }))
+      }))
     }), {})
     instance_refresh = optional(object({
       namespace  = optional(string, "kube-system")
@@ -335,8 +351,10 @@ variable "mongodb" {
     helm_chart_version    = optional(string)
 
     persistent_volume = optional(object({
-      storage_provisioner = string
-      volume_binding_mode = optional(string, "Immediate")
+      storage_provisioner = optional(string, "ebs.csi.aws.com")
+      acces_mode          = optional(list(string), ["ReadWriteOnce"])
+      reclaim_policy      = optional(string, "Delete")
+      volume_binding_mode = optional(string, "WaitForFirstConsumer")
       parameters          = optional(map(string), {})
       #Resources for PVC
       resources = optional(object({
@@ -409,6 +427,42 @@ variable "mongodb_sharding" {
       }))
       labels = optional(map(string))
     }))
+
+    persistence = optional(object({
+      shards = optional(object({
+        access_mode         = optional(list(string), ["ReadWriteOnce"])
+        reclaim_policy      = optional(string, "Delete")
+        storage_provisioner = optional(string, "ebs.csi.aws.com")
+        volume_binding_mode = optional(string, "WaitForFirstConsumer")
+        parameters          = optional(map(string), {})
+
+        resources = optional(object({
+          limits = optional(object({
+            storage = string
+          }))
+          requests = optional(object({
+            storage = string
+          }))
+        }))
+      }), {})
+
+      configsvr = optional(object({
+        access_mode         = optional(list(string), ["ReadWriteOnce"])
+        reclaim_policy      = optional(string, "Delete")
+        storage_provisioner = optional(string, "ebs.csi.aws.com")
+        volume_binding_mode = optional(string, "WaitForFirstConsumer")
+        parameters          = optional(map(string), {})
+
+        resources = optional(object({
+          limits = optional(object({
+            storage = string
+          }))
+          requests = optional(object({
+            storage = string
+          }))
+        }))
+      }), {})
+    }), {})
   })
   default = null
 }

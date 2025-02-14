@@ -165,6 +165,7 @@ variable "mongodb" {
     persistent_volume = optional(object({
       storage_provisioner = optional(string)
       volume_binding_mode = optional(string, "Immediate")
+      reclaim_policy      = optional(string, "Delete")
       parameters          = optional(map(string), {})
       #Resources for PVC
       resources = optional(object({
