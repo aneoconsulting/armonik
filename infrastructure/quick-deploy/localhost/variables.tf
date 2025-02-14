@@ -114,6 +114,15 @@ variable "activemq" {
     image_tag          = optional(string)
     node_selector      = optional(any, {})
     image_pull_secrets = optional(string, "")
+    limits = optional(object({
+      cpu    = optional(string)
+      memory = optional(string)
+    }))
+    requests = optional(object({
+      cpu    = optional(string)
+      memory = optional(string)
+    }))
+    activemq_opts_memory = optional(string, "-Xms1g -Xmx3g")
   })
   default = null
 }

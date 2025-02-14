@@ -292,6 +292,20 @@ elasticache = {
 
 #s3_os = {}
 
+# activemq = {
+#   node_selector = { service = "state-database" }
+#   limits = {
+#     cpu = "4000m"
+#     memory = "16Gi"
+#   }
+#   requests = {
+#     cpu = "4000m"
+#     memory = "16Gi"
+#   }
+#   activemq_opts_memory = "-Xms1g -Xmx3g"
+# }
+
+
 mq = {
   engine_type        = "ActiveMQ"
   engine_version     = "5.18"

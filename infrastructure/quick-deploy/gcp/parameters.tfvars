@@ -244,11 +244,18 @@ keda = {
 }
 
 # activemq = {
-#   node_selector = {}
-#   image_name   = "symptoma/activemq"
-#   image_tag    = "latest"
-#   image_pull_secrets = ""
+#   node_selector = { service = "state-database" }
+#   limits = {
+#     cpu = "4000m"
+#     memory = "16Gi"
+#   }
+#   requests = {
+#     cpu = "4000m"
+#     memory = "16Gi"
+#   }
+#   activemq_opts_memory = "-Xms1g -Xmx3g"
 # }
+
 
 mongodb = {
   node_selector = { service = "state-database" }

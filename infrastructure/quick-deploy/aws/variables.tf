@@ -317,6 +317,27 @@ variable "mq_credentials" {
   }
 }
 
+# Parameters for ActiveMQ - on premise
+variable "activemq" {
+  description = "Parameters of ActiveMQ"
+  type = object({
+    image_name         = optional(string, "symptoma/activemq")
+    image_tag          = optional(string)
+    node_selector      = optional(any, {})
+    image_pull_secrets = optional(string, "")
+    limits = optional(object({
+      cpu    = optional(string)
+      memory = optional(string)
+    }))
+    requests = optional(object({
+      cpu    = optional(string)
+      memory = optional(string)
+    }))
+    activemq_opts_memory = optional(string, "-Xms1g -Xmx3g")
+  })
+  default = null
+}
+
 # Parameters for MongoDB
 variable "mongodb" {
   description = "Parameters of MongoDB"
